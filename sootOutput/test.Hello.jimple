@@ -1,0 +1,46 @@
+public class test.Hello extends java.lang.Object
+{
+
+    public void <init>()
+    {
+        test.Hello r0;
+
+        r0 := @this: test.Hello;
+        specialinvoke r0.<java.lang.Object: void <init>()>();
+        return;
+    }
+
+    public static void main(java.lang.String[])
+    {
+        java.lang.String[] r0;
+        java.io.PrintStream $r1;
+        byte b0;
+        boolean z0;
+        int i1;
+
+        r0 := @parameter0: java.lang.String[];
+        $r1 = <java.lang.System: java.io.PrintStream out>;
+        virtualinvoke $r1.<java.io.PrintStream: void println(java.lang.String)>("Hello world!");
+        b0 = 0;
+        z0 = 1;
+        if b0 >= 1 goto label0;
+
+        i1 = b0 + 1;
+
+     label0:
+        return;
+    }
+
+    public static java.lang.String getFirstString()
+    {
+        return "Hello Ayse";
+    }
+
+    public java.lang.String getSecondString()
+    {
+        test.Hello r0;
+
+        r0 := @this: test.Hello;
+        return "Hello Ahmet";
+    }
+}
