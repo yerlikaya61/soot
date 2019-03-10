@@ -19,13 +19,16 @@ public class Connector {
 
         // set parameter as main class
         final String mainClass = args[0];
+        
+        final String separator = System.getProperty("path.separator");
 
         // set class path of soot, rt and jce files
-        final String classPath = ".;C:\\Tools\\eclipse-oxygen\\workspace\\Studienprojekt\\bin\\;"
-                                 + "C:\\Tools\\eclipse-oxygen\\workspace\\Studienprojekt\\src\\lib\\soot-2.5.0.jar;"
-                                 + "C:\\Tools\\jdk\\jdk1.7.0_55\\jre\\lib\\rt.jar;"
-                                 + "C:\\Tools\\jdk\\jdk1.7.0_55\\jre\\lib\\jce.jar";        
-
+        final String classPath = "." + separator
+        						 + System.getProperty("user.dir") + "/bin/" + separator
+                                 + System.getProperty("user.dir") + "/src/lib/soot-2.5.0.jar" + separator
+                                 + System.getProperty("java.home") + "/lib/rt.jar" + separator
+                                 + System.getProperty("java.home") + "/lib/jce.jar";        
+        
         // set arguments for Soot
         final String[] sootArgs = { 
                // "-cp", classPath,             // Use path as the classpath for finding classes. 
