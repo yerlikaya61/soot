@@ -15,6 +15,6 @@ public class Hello {
     }
 
     public String getSecondString() {
-        return "Hello Ahmet";
+        return "Hello";
     }
 }
