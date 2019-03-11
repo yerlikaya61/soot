@@ -14,7 +14,13 @@ public class Hello {
         return "Hello Ayse";
     }
 
-    public String getSecondString() {
+    public String test2() {
+        int i = 0;
+        final int j = 1;
+        if (i < j) {
+            i++;
+        }
+
         return "Hello";
     }
 }
