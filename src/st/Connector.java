@@ -1,10 +1,16 @@
 
 package st;
 
+import java.util.Iterator;
+
 import soot.PackManager;
 import soot.Scene;
 import soot.SootClass;
+import soot.SootMethod;
+import soot.Unit;
 import soot.options.Options;
+import soot.toolkits.graph.ExceptionalUnitGraph;
+import soot.toolkits.graph.UnitGraph;
 
 public class Connector {
 
@@ -19,26 +25,45 @@ public class Connector {
 
         // set parameter as main class
         final String mainClass = args[0];
-        
-        final String separator = System.getProperty("path.separator");
 
-        // set class path of soot, rt and jce files
-        final String classPath = "." + separator
-        						 + System.getProperty("user.dir") + "/bin/" + separator
-                                 + System.getProperty("user.dir") + "/src/lib/soot-2.5.0.jar" + separator
-                                 + System.getProperty("java.home") + "/lib/rt.jar" + separator
-                                 + System.getProperty("java.home") + "/lib/jce.jar";        
-        
         // set arguments for Soot
         final String[] sootArgs = { 
-               // "-cp", classPath,             // Use path as the classpath for finding classes. 
                 "-pp",                          // Prepend the given soot classpath to the default classpath.
                 "-w",                           // Run in whole-program mode
-                //"-src-prec", "java",            // Sets source precedence to format files 
-                //"-main-class", mainClass,     // Sets the main class for whole-program analysis.
                 "-f", "J",                      // Set output format for Soot to J=jimple 
                 mainClass                       // https://soot-build.cs.uni-paderborn.de/public/origin/develop/soot/soot-develop/options/soot_options.htm
                 };
+
+        // set Soot Options
+        setSootOptions(mainClass);
+
+        // Load the main class
+        final SootClass c = loadClass(mainClass);
+        
+        // Get control flow graph for this method
+        getCFGForMethodName(c, "test2");
+        
+        // cg = the call graph pack
+        PackManager.v().getPack("cg").apply();
+
+        // Call main function with arguments
+        soot.Main.main(sootArgs);
+    } 
+    
+    /**
+     * Set the Soot Options
+     * @param mainClass
+     */
+    public static void setSootOptions(final String mainClass)
+    {
+        final String separator = System.getProperty("path.separator");
+        
+        // set class path of soot, rt and jce files
+        final String classPath = "." + separator
+                                 + System.getProperty("user.dir") + "/bin/" + separator
+                                 + System.getProperty("user.dir") + "/src/lib/soot-2.5.0.jar" + separator
+                                 + System.getProperty("java.home") + "/lib/rt.jar" + separator
+                                 + System.getProperty("java.home") + "/lib/jce.jar";
         
         // Set Soot's internal classpath
         Options.v().set_soot_classpath(classPath);
@@ -59,18 +84,41 @@ public class Connector {
 
         // Set the main class of the application to be analysed
         Options.v().set_main_class(mainClass);
-
-        // Load the main class
-        final SootClass c = Scene.v().loadClassAndSupport(mainClass);        
+    }
+    
+    /**
+     * Get control flow graph of the SootClass by method name
+     * @param c is the SootClass
+     * @param methodName is the method name
+     * @return an UnitGraph
+     */
+    public static UnitGraph getCFGForMethodName(SootClass c, String methodName) {
+        SootMethod method = c.getMethodByName(methodName);
+        UnitGraph unitGraph = new ExceptionalUnitGraph(method.retrieveActiveBody());
+        if(unitGraph != null)
+        {
+            final Iterator<Unit> unitIt = unitGraph.iterator();
+    
+            while (unitIt.hasNext()) {
+                final Unit s = unitIt.next();
+                System.out.println(s);
+            }
+        }
+        return unitGraph;
+    }
+    
+    /**
+     * Method to load the class
+     * @param className
+     * @return c as SootClass
+     */
+    public static SootClass loadClass(final String className) {
+        final SootClass c = Scene.v().loadClassAndSupport(className);        
         Scene.v().loadNecessaryClasses();        
         c.setApplicationClass();
         Scene.v().setMainClass(c);
-
-        PackManager.v().getPack("cg").apply();
         
-        // Call main function with arguments
-        soot.Main.main(sootArgs);
-
+        return c;
     }
 
 }
